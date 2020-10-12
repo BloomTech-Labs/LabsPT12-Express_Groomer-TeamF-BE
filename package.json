@@ -40,7 +40,8 @@
   "lint-staged": {
     "src/**/*.{js,jsx}": [
       "eslint --fix",
-      "prettier-eslint --write"
+      "prettier-eslint --write",
+      "npm run tests"
     ]
   },
   "husky": {
