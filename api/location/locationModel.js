@@ -1,6 +1,6 @@
 const db = require('../../data/db-config');
 
-module.export = { findAll, findBy, findByGroomerId, insert, remove };
+module.exports = { findAll, findBy, findByGroomerId, insert, remove };
 
 function findAll() {
   return db('locations');
