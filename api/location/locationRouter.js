@@ -14,7 +14,11 @@ const authRequired = require('../middleware/authRequired');
 router.get('/', authRequired, async (req, res) => {
   try {
     const locationData = await findAll();
-    res.status(200).json(locationData);
+    res.status(200).json({
+      message: 'Success',
+      validation: [],
+      data: locationData,
+    });
   } catch (err) {
     errDetail(res, err);
   }
@@ -22,9 +26,23 @@ router.get('/', authRequired, async (req, res) => {
 
 router.get('/:groomerId', authRequired, async (req, res) => {
   try {
-    const groomerId = req.params.groomerId;
-    const locationData = await findBy({ groomerId });
-    res.status(200).json(locationData);
+    const groomerId = String(req.params.groomerId);
+    const location = await findBy({ groomerId });
+
+    if (location && location.length) {
+      const locationRes = {
+        message: 'Success',
+        validation: [],
+        data: location,
+      };
+      res.status(200).json(locationRes);
+    } else {
+      res.status(404).json({
+        message: 'Location Not Found',
+        validation: [],
+        data: [],
+      });
+    }
   } catch (err) {
     errDetail(res, err);
   }
