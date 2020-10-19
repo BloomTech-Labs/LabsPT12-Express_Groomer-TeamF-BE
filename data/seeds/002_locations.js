@@ -8,8 +8,8 @@ const fakeData = [
     address: faker.address.streetAddress('###'),
     email: faker.internet.email(),
     phoneNumber: faker.phone.phoneNumberFormat(),
-    lat: faker.finance.amount(-90, 90, 6),
-    lng: faker.finance.amount(-180, 180, 6),
+    lat: faker.address.latitude(),
+    lng: faker.address.longitude(),
   },
   {
     id: 2,
@@ -18,8 +18,8 @@ const fakeData = [
     address: faker.address.streetAddress('###'),
     email: faker.internet.email(),
     phoneNumber: faker.phone.phoneNumberFormat(),
-    lat: faker.finance.amount(-90, 90, 6),
-    lng: faker.finance.amount(-180, 180, 6),
+    lat: faker.address.latitude(),
+    lng: faker.address.longitude(),
   },
 ];
 
