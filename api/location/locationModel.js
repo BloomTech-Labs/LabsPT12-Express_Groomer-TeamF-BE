@@ -7,11 +7,11 @@ function findAll() {
 }
 
 function findBy(field) {
-  return db('locations').where(field)
+  return db('locations').where(field);
 }
 
 function findByGroomerId(id) {
-  return db('locations').where('groomer_id', id)
+  return db('locations').where('groomer_id', id);
 }
 
 function insert(location) {
