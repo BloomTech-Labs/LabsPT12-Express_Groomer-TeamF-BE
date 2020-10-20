@@ -12,6 +12,7 @@
     "format": "npx prettier --write \"**/*.+(js|jsx|json|yml|yaml|css|md)\"",
     "knex": "npx knex --knexfile config/knexfile.js",
     "tests": "npx jest --forceExit",
+    "prettier": "prettier --ignore-path .gitignore \"**/*.+(js|ts)\"",
     "coverage": "CI=true npx jest --coverage --detectOpenHandles --forceExit"
   },
   "jest": {
@@ -38,10 +39,10 @@
     ]
   },
   "lint-staged": {
-    "src/**/*.{js,jsx}": [
+    "*.+(js)": [
       "eslint --fix",
-      "prettier-eslint --write",
-      "npm run tests"
+      "npm run prettier",
+      "npx jest --forceExit --findRelatedTests"
     ]
   },
   "husky": {
@@ -60,18 +61,18 @@
     "faker": "^4.1.0",
     "helmet": "^3.23.1",
     "http-errors": "~1.6.3",
-    "knex": "^0.21.1",
+    "knex": "^0.21.6",
     "morgan": "~1.9.1",
-    "pg": "^8.2.1",
-    "swagger-jsdoc": "^4.0.0",
+    "pg": "^8.4.1",
+    "swagger-jsdoc": "^4.3.0",
     "swagger-ui-express": "^4.1.4"
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
-    "eslint": "^7.3.1",
-    "eslint-config-prettier": "^6.11.0",
+    "eslint": "^7.11.0",
+    "eslint-config-prettier": "^6.13.0",
     "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jest": "^23.17.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.1.4",
@@ -79,8 +80,8 @@
     "eslint-plugin-standard": "^4.0.1",
     "husky": "^4.3.0",
     "jest": "^25.2.4",
-    "lint-staged": "^10.4.0",
-    "nodemon": "^2.0.4",
+    "lint-staged": "^10.4.2",
+    "nodemon": "^2.0.5",
     "prettier": "^2.0.5",
     "supertest": "^4.0.2"
   }
