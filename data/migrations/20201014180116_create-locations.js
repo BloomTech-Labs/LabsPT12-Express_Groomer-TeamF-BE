@@ -1,13 +1,16 @@
 exports.up = function (knex) {
-  return knex.schema.createTable('locations', function (table) {
-    table.string('id').notNullable().unique().primary();
-    table.string('groomerId').notNullable();
-    table.string('businessName');
-    table.string('address');
-    table.string('email');
-    table.string('phoneNumber');
-    table.float('lat', 10, 6);
-    table.float('lng', 10, 6);
+  return knex.schema.createTable('locations', function (tbl) {
+    tbl.string('id').notNullable().unique().primary();
+    tbl.string('groomerId').notNullable();
+    tbl.string('businessName');
+    tbl.string('address');
+    tbl.string('city');
+    tbl.string('state');
+    tbl.string('zip');
+    tbl.string('email');
+    tbl.string('phoneNumber');
+    tbl.float('lat', 10, 6);
+    tbl.float('lng', 10, 6);
   });
 };
 
