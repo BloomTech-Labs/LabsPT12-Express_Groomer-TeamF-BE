@@ -1,6 +1,6 @@
 const db = require('../../data/db-config');
 
-module.exports = { findAll, findBy, findByGroomerId, insert, remove };
+module.exports = { findAll, findBy, findByGroomerId, insert, update, remove };
 
 function findAll() {
   return db('locations');
@@ -11,13 +11,22 @@ function findBy(field) {
 }
 
 function findByGroomerId(id) {
-  return db('locations').where('groomer_id', id);
+  return db('locations').where({ groomerId: id }).first().select();
 }
 
 function insert(location) {
   return db('locations').insert(location).returning('*');
 }
 
+function update(id, profile) {
+  console.log(profile);
+  return db('locations')
+    .where({ groomerId: id })
+    .first()
+    .update(profile)
+    .returning('*');
+}
+
 function remove(id) {
-  return db('locations').where({ id }).del();
+  return db('locations').where({ groomerId: id }).del();
 }

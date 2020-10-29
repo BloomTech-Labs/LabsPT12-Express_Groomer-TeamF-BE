@@ -63,4 +63,41 @@ describe('locations router endpoints', () => {
       expect(res.body.message).toBe('Location Not Found');
     });
   });
+
+  describe('PUT /locations', () => {
+    it('should return 200 when profile is created', async () => {
+      const location = {
+        id: '3',
+        groomerId: 'hgf5rfgh54',
+        businessName: 'Groomers R Us',
+        address: '123 Ruff Rd',
+        email: 'Roger@gmail.com',
+        phoneNumber: '818-222-8983',
+        lat: -153.91525,
+        lng: 6.60353,
+      };
+      Locations.findByGroomerId.mockResolvedValue(location);
+      Locations.update.mockResolvedValue([
+        {
+          id: '3',
+          groomerId: '245feafeffehes',
+          businessName: 'Groomers R Us',
+          address: '123 Ruff Rd',
+          email: 'Roger@gmail.com',
+          phoneNumber: '818-222-8983',
+          lat: -153.91525,
+          lng: 6.60353,
+        },
+      ]);
+      const res = await request(server)
+        .put(`/locations/hgf5rfgh54`)
+        .send(location);
+      const first = res.body.data[0];
+      console.log([res.status, res]);
+
+      expect(res.status).toBe(200);
+      expect(first.groomerId).not.toBe(`hgf5rfgh54`);
+      expect(first.groomerId).toBe(`245feafeffehes`);
+    });
+  });
 });
