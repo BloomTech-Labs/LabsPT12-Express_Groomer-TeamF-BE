@@ -104,4 +104,28 @@ describe('locations router endpoints', () => {
       );
     });
   });
+
+  describe('/POST locations', () => {
+    test('the post controller for locations inserts a location', async () => {
+      const location = generate.buildLocation();
+      Locations.insert.mockResolvedValue([location]);
+      Locations.findByGroomerId.mockResolvedValue(undefined);
+
+      // Send the request
+      const res = await request(server).post('/locations').send(location);
+      // The response is the first array element
+      const first = res.body.data[0];
+
+      // The response
+      expect(res.status).toBe(200);
+      expect(first).toEqual(location);
+
+      // There is one and only one location returned
+      expect(res.body.data).toHaveLength(1);
+
+      // The location object was sent to the endpoint
+      expect(Locations.insert.mock.calls.length).toBe(1);
+      expect(Locations.insert).toHaveBeenCalledWith(location);
+    });
+  });
 });
