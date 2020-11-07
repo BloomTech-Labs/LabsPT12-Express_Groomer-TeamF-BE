@@ -1,7 +1,13 @@
 exports.up = function (knex) {
   return knex.schema.createTable('locations', function (tbl) {
-    tbl.string('id').notNullable().unique().primary();
-    tbl.string('groomerId').notNullable();
+    tbl.increments();
+    tbl
+      .string('groomerId')
+      .notNullable()
+      .references('id')
+      .inTable('profiles')
+      .onUpdate('CASCADE')
+      .onDelete('CASCADE');
     tbl.string('businessName');
     tbl.string('address');
     tbl.string('city');
