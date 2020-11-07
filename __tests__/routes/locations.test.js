@@ -105,7 +105,7 @@ describe('locations router endpoints', () => {
     });
   });
 
-  describe('/POST locations', () => {
+  describe('POST /locations', () => {
     test('the post controller for locations inserts a location', async () => {
       const location = generate.buildLocation();
       Locations.insert.mockResolvedValue([location]);
