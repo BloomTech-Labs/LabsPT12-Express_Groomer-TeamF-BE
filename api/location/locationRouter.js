@@ -96,9 +96,9 @@ router.put('/:groomerId', authRequired, function (req, res) {
 });
 
 router.post('/', authRequired, async (req, res) => {
-  const location = req.body;
+  let location = req.body;
+  const id = location.groomerId;
   if (location) {
-    const id = String(req.params.groomerId);
     try {
       await db.findByGroomerId(id).then(async (undef) => {
         if (undef == undefined) {
