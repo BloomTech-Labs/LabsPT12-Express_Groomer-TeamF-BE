@@ -128,4 +128,27 @@ describe('locations router endpoints', () => {
       expect(Locations.insert).toHaveBeenCalledWith(location);
     });
   });
+
+  describe('DELETE /locations', () => {
+    test('the delete controller for locations deletes a location', async () => {
+      const location = generate.buildLocation();
+      Locations.findByGroomerId.mockResolvedValue([location]);
+      Locations.remove.mockResolvedValue(1);
+
+      // Send the request
+      const res = await request(server)
+        .delete(`/locations/${location.groomerId}`)
+        .send();
+      // Grab the first element in the response
+      const first = res.body.data[0];
+      expect(first).toBeUndefined();
+
+      // Test that there is nothing returned
+      expect(res.body.data).toBe(1);
+
+      // The groomer id was sent to the end point, and the mocck was called
+      expect(Locations.remove.mock.calls.length).toBe(1);
+      expect(Locations.remove).toHaveBeenCalledWith(location.groomerId);
+    });
+  });
 });
