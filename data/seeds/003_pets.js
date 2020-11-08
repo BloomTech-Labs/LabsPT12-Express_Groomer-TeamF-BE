@@ -6,7 +6,7 @@ exports.seed = function (knex) {
     .then(function () {
       return knex('pets').insert([
         {
-          owner_id: '00ulthapbErVUwVJy4x6',
+          ownerId: '00ulthapbErVUwVJy4x6',
           name: faker.name.firstName(),
           shots: true,
           type: 'dog',
@@ -14,7 +14,7 @@ exports.seed = function (knex) {
             'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=100&q=80',
         },
         {
-          owner_id: '00ulthapbErVUwVJy4x6',
+          ownerId: '00ulthapbErVUwVJy4x6',
           name: faker.name.firstName(),
           shots: true,
           type: 'cat',
@@ -22,7 +22,7 @@ exports.seed = function (knex) {
             'https://images.unsplash.com/photo-1543852786-1cf6624b9987?iauto=format&fit=crop&w=200&q=80',
         },
         {
-          owner_id: '00ultwew80Onb2vOT4x6',
+          ownerId: '00ultwew80Onb2vOT4x6',
           name: faker.name.firstName(),
           shots: true,
           type: 'dog',

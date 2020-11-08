@@ -2,7 +2,7 @@ exports.up = function (knex) {
   return knex.schema.createTable('pets', function (tbl) {
     tbl.increments();
     tbl
-      .string('owner_id')
+      .string('ownerId')
       .notNullable()
       .references('id')
       .inTable('profiles')
