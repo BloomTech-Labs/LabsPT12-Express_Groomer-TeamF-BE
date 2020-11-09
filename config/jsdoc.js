@@ -19,6 +19,10 @@ module.exports = {
         name: 'profile',
         description: 'Operations for profile',
       },
+      {
+        name: 'pets',
+        description: 'Data for pets',
+      },
     ],
     components: {
       securitySchemes: {
@@ -46,6 +50,33 @@ module.exports = {
                     type: 'string',
                     description: 'A message about the result',
                     example: 'Not Found',
+                  },
+                },
+              },
+            },
+          },
+        },
+        ServerError: {
+          description: 'There was a problem completing the required operation',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    description: 'A message about the server error',
+                    example: 'Server Error',
+                  },
+                  validation: {
+                    type: 'array',
+                    description: 'An array of validation errors',
+                    example: `['The id is missing']`,
+                  },
+                  data: {
+                    type: 'array',
+                    description: 'An array of objects containing the data',
+                    example: '{}',
                   },
                 },
               },
