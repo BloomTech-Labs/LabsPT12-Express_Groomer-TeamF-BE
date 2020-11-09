@@ -3,7 +3,7 @@ const faker = require('faker');
 const fakeData = [
   {
     id: 1,
-    groomerId: 'ce68mjqz2by3t2peo6i4',
+    groomerId: '00ultwqjtqt4VCcS24x6',
     businessName: 'Furry Friends Grooming & Care',
     address: faker.address.streetAddress('###'),
     email: faker.internet.email(),
@@ -13,7 +13,7 @@ const fakeData = [
   },
   {
     id: 2,
-    groomerId: 'bftqzfqkq3xzj953q64r',
+    groomerId: '00ultwz1n9ORpNFc04x6',
     businessName: "Gillian's Fine Pet Grooming",
     address: faker.address.streetAddress('###'),
     email: faker.internet.email(),
