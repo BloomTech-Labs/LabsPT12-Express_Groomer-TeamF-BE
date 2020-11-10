@@ -71,17 +71,31 @@ const authRequired = require('../middleware/authRequired');
 router.get('/', authRequired, async (req, res) => {
   try {
     // Return any pets found, or indicate none were returned
-    const id = String(req.params.id);
-    const pets = await petsDb.findByOwnerId(id);
+    const oktaId = String(req.params.id);
+    const pets = await petsDb.findByOwnerId(oktaId);
+
+    // Authorize the user to only view their pets
+    const authId = String(req.profile.id); // Received from the authRequired middleware
+    if (authId !== oktaId) {
+      return res.status(403).json({
+        message: `Access Denied`,
+        validation: [
+          `Your auth id ${authId} and the route profile id ${oktaId} don't match`,
+        ],
+        data: {},
+      });
+    }
+
+    // Return any pets found, or indicate none were found
     if (pets && pets.length) {
       res.status(200).json({
-        message: `Successfully fetched the pets for profile ${id}`,
+        message: `Successfully fetched the pets for profile ${oktaId}`,
         validation: [],
         data: pets,
       });
     } else {
       res.status(404).json({
-        message: `No pets were found for profile ${id}`,
+        message: `No pets were found for profile ${oktaId}`,
         validation: [],
         data: {},
       });
@@ -132,27 +146,40 @@ router.get('/', authRequired, async (req, res) => {
  */
 router.get('/:petId', authRequired, async (req, res) => {
   // Ensure the route contains an id
-  const id = String(req.params.id); // Cast to int because record ids are integer type
+  const oktaId = String(req.params.id); // Cast to int because record ids are integer type
   const petId = Number(req.params.petId);
 
-  // If the id is found, return any pets found, or indicate none were returned
+  // Authorize the user to only view their pets
+  const authId = String(req.profile.id); // Received from the authRequired middleware
+  if (authId !== oktaId) {
+    return res.status(403).json({
+      message: `Access Denied`,
+      validation: [
+        `Your auth id ${authId} and the route profile id ${oktaId} don't match`,
+      ],
+      data: {},
+    });
+  }
+
+  // Return any pets found, or indicate none were found
   try {
-    const pets = await petsDb.findByOwnerId(id);
+    const pets = await petsDb.findByOwnerId(oktaId);
     const pet = pets.filter((pet) => pet.id === petId);
     if (pet && pet.length) {
       res.status(200).json({
-        message: `Successfully fetched a pet with id ${petId} for owner ${id}`,
+        message: `Successfully fetched a pet with id ${petId} for owner ${oktaId}`,
         validation: [],
         data: pet,
       });
     } else {
       res.status(404).json({
-        message: `Unable to find a pet with id ${petId} for owner ${id}`,
+        message: `Unable to find a pet with id ${petId} for owner ${oktaId}`,
         validation: [],
         data: {},
       });
     }
   } catch (err) {
+    // Handle errors with a custom error utility
     errDetail(err);
   }
 });
