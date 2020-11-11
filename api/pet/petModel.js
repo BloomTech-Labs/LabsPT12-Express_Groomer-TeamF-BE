@@ -14,8 +14,8 @@ function findByOwnerId(id) {
   return db('pets').where({ ownerId: id });
 }
 
-function insert(location) {
-  return db('pets').insert(location).returning('*');
+function insert(pet) {
+  return db('pets').insert(pet).returning('*');
 }
 
 function update(id, pet) {

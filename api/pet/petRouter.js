@@ -68,23 +68,11 @@ const authRequired = require('../middleware/authRequired');
  *      500:
  *        $ref: '#/components/responses/ServerError'
  */
-router.get('/', authRequired, async (req, res) => {
+router.get('/', authRequired, authId, async (req, res) => {
   try {
     // Return any pets found, or indicate none were returned
     const oktaId = String(req.params.id);
     const pets = await petsDb.findByOwnerId(oktaId);
-
-    // Authorize the user to only view their pets
-    const authId = String(req.profile.id); // Received from the authRequired middleware
-    if (authId !== oktaId) {
-      return res.status(403).json({
-        message: `Access Denied`,
-        validation: [
-          `Your auth id ${authId} and the route profile id ${oktaId} don't match`,
-        ],
-        data: {},
-      });
-    }
 
     // Return any pets found, or indicate none were found
     if (pets && pets.length) {
@@ -144,22 +132,10 @@ router.get('/', authRequired, async (req, res) => {
  *      500:
  *        $ref: '#/components/responses/ServerError'
  */
-router.get('/:petId', authRequired, async (req, res) => {
-  // Ensure the route contains an id
-  const oktaId = String(req.params.id); // Cast to int because record ids are integer type
+router.get('/:petId', authRequired, authId, async (req, res) => {
+  // Get params
+  const oktaId = String(req.params.id);
   const petId = Number(req.params.petId);
-
-  // Authorize the user to only view their pets
-  const authId = String(req.profile.id); // Received from the authRequired middleware
-  if (authId !== oktaId) {
-    return res.status(403).json({
-      message: `Access Denied`,
-      validation: [
-        `Your auth id ${authId} and the route profile id ${oktaId} don't match`,
-      ],
-      data: {},
-    });
-  }
 
   // Return any pets found, or indicate none were found
   try {
@@ -184,4 +160,21 @@ router.get('/:petId', authRequired, async (req, res) => {
   }
 });
 
+// Middleware
+function authId(req, res, next) {
+  // Authorize the user to only view their pets
+  // Check logged in id from the okta JWT against the okta id in the params
+  const oktaId = String(req.params.id);
+  const authId = String(req.profile.id); // Received from the authRequired middleware
+  if (authId !== oktaId) {
+    return res.status(401).json({
+      message: `Access Denied`,
+      validation: [
+        `Your auth id ${authId} and the route profile id ${oktaId} don't match`,
+      ],
+      data: {},
+    });
+  }
+  next();
+}
 module.exports = router;
