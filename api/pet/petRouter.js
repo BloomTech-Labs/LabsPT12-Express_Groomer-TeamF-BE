@@ -162,16 +162,6 @@ router.get('/:petId', authRequired, authId, async (req, res) => {
 
 /**
  * @swagger
- * components:
- *  parameters:
- *    petId: petId
- *    in: path
- *    description: The id of the pet to return
- *    required: true
- *    example: 1
- *    schema:
- *      type: integer
- *
  * /profiles/:id/pets:
  *  post:
  *    description: Add a pet to the pets db
@@ -212,7 +202,73 @@ router.post('/', authRequired, authId, async (req, res) => {
   try {
     const newPet = await petsDb.insert(petToInsert);
     res.status(200).json({
-      message: `Successfully added a pet for owner for owner ${oktaId}`,
+      message: `Successfully added a pet for owner ${oktaId}`,
+      validation: [],
+      data: newPet,
+    });
+  } catch (err) {
+    errDetail(err);
+  }
+});
+
+/**
+ * @swagger
+ * components:
+ *  parameters:
+ *    petId: petId
+ *    in: path
+ *    description: The id of the pet to return
+ *    required: true
+ *    example: 1
+ *    schema:
+ *      type: integer
+ *
+ * /profiles/:id/pets/:petId:
+ *  put:
+ *    description: Update a pet
+ *    summary: Returns an updated pet object
+ *    security:
+ *      - okta: []
+ *    tags:
+ *      - pets
+ *    parameters:
+ *      - $ref: '#/components/parameters/petId'
+ *    responses:
+ *      200:
+ *        description: Successfully updated a pet with id X for owner Y
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/Pets'
+ *      400:
+ *        $ref: '#/components/responses/BadRequest'
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
+ *      404:
+ *        description: 'Unable to find a pet with id X for owner Y'
+ *      500:
+ *        $ref: '#/components/responses/ServerError'
+ */
+router.put('/:petId', authRequired, authId, async (req, res) => {
+  // Get the params
+  const oktaId = String(req.params.id);
+  const petId = Number(req.params.petId);
+  const petUpdates = req.body;
+
+  // Ensure there is request data
+  if (!petUpdates) {
+    return res.status(400).json({
+      message: 'No Request Body',
+      validation: ['You must submit a request body in order to update a pet'],
+      data: {},
+    });
+  }
+
+  // Update the new pet record
+  try {
+    const newPet = await petsDb.update(petId, petUpdates);
+    res.status(200).json({
+      message: `Successfully updated pet with id ${petId} for owner ${oktaId}`,
       validation: [],
       data: newPet,
     });
