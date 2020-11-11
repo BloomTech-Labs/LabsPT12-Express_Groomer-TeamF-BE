@@ -160,6 +160,67 @@ router.get('/:petId', authRequired, authId, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * components:
+ *  parameters:
+ *    petId: petId
+ *    in: path
+ *    description: The id of the pet to return
+ *    required: true
+ *    example: 1
+ *    schema:
+ *      type: integer
+ *
+ * /profiles/:id/pets:
+ *  post:
+ *    description: Add a pet to the pets db
+ *    summary: Returns a pet object
+ *    security:
+ *      - okta: []
+ *    tags:
+ *      - pets
+ *    responses:
+ *      200:
+ *        description: Successfully a pet for owner _
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/Pets'
+ *      400:
+ *        $ref: '#/components/responses/BadRequest'
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
+ *      500:
+ *        $ref: '#/components/responses/ServerError'
+ */
+router.post('/', authRequired, authId, async (req, res) => {
+  // Get the params
+  const oktaId = String(req.params.id);
+  const petToInsert = req.body;
+
+  // Ensure there is request data
+  if (!petToInsert) {
+    return res.status(400).json({
+      message: 'No Request Body',
+      validation: ['You must submit a request body in order to add a pet'],
+      data: {},
+    });
+  }
+
+  // Insert the new pet record
+  try {
+    const newPet = await petsDb.insert(petToInsert);
+    res.status(200).json({
+      message: `Successfully added a pet for owner for owner ${oktaId}`,
+      validation: [],
+      data: newPet,
+    });
+  } catch (err) {
+    errDetail(err);
+  }
+});
+
 // Middleware
 function authId(req, res, next) {
   // Authorize the user to only view their pets
@@ -177,4 +238,5 @@ function authId(req, res, next) {
   }
   next();
 }
+
 module.exports = router;
