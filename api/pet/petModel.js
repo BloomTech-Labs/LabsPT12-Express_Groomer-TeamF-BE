@@ -15,10 +15,18 @@ function findByOwnerId(id) {
 }
 
 function insert(pet) {
+  // Remove the id if it's sent with the object
+  if (Object.keys(pet).includes('id')) {
+    delete pet.id;
+  }
   return db('pets').insert(pet).returning('*');
 }
 
 function update(id, pet) {
+  // Remove the id if it's sent with the object
+  if (Object.keys(pet).includes('id')) {
+    delete pet.id;
+  }
   return db('pets').where({ id }).update(pet).returning('*');
 }
 
