@@ -30,6 +30,11 @@ function update(id, pet) {
   return db('pets').where({ id }).update(pet).returning('*');
 }
 
-function remove(id) {
-  return db('pets').where({ ownerId: id }).del();
+function remove(petId, ownerId) {
+  return db('pets')
+    .where({
+      id: petId,
+      ownerId,
+    })
+    .del();
 }
