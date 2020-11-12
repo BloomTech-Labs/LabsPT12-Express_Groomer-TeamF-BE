@@ -132,15 +132,12 @@ router.get('/', authRequired, authId, async (req, res) => {
  *      500:
  *        $ref: '#/components/responses/ServerError'
  */
-router.get('/:petId', authRequired, authId, async (req, res) => {
-  // Get params
-  const oktaId = String(req.params.id);
-  const petId = Number(req.params.petId);
+router.get('/:petId', authRequired, authId, verifyPet, async (req, res) => {
+  // Get data from the request
+  const { oktaId, petId, pet } = req.pet; // added by the verifyPet middleware
 
   // Return any pets found, or indicate none were found
   try {
-    const pets = await petsDb.findByOwnerId(oktaId);
-    const pet = pets.filter((pet) => pet.id === petId);
     if (pet && pet.length) {
       res.status(200).json({
         message: `Successfully fetched a pet with id ${petId} for owner ${oktaId}`,
@@ -185,7 +182,7 @@ router.get('/:petId', authRequired, authId, async (req, res) => {
  *        $ref: '#/components/responses/ServerError'
  */
 router.post('/', authRequired, authId, async (req, res) => {
-  // Get the params
+  // Get data from the request
   const oktaId = String(req.params.id);
   const petToInsert = req.body;
 
@@ -249,10 +246,9 @@ router.post('/', authRequired, authId, async (req, res) => {
  *      500:
  *        $ref: '#/components/responses/ServerError'
  */
-router.put('/:petId', authRequired, authId, async (req, res) => {
-  // Get the params
-  const oktaId = String(req.params.id);
-  const petId = Number(req.params.petId);
+router.put('/:petId', authRequired, authId, verifyPet, async (req, res) => {
+  // Get data from the request
+  const { oktaId, petId, pet } = req.pet; // added by the verifyPet middleware
   const petUpdates = req.body;
 
   // Ensure there is request data
@@ -266,14 +262,95 @@ router.put('/:petId', authRequired, authId, async (req, res) => {
 
   // Update the new pet record
   try {
-    const newPet = await petsDb.update(petId, petUpdates);
-    res.status(200).json({
-      message: `Successfully updated pet with id ${petId} for owner ${oktaId}`,
-      validation: [],
-      data: newPet,
-    });
+    // Ensure the pet exists
+    if (pet && pet.length) {
+      const newPet = await petsDb.update(petId, petUpdates);
+      res.status(200).json({
+        message: `Successfully updated pet with id ${petId} for owner ${oktaId}`,
+        validation: [],
+        data: newPet,
+      });
+    } else {
+      res.status(404).json({
+        message: `Unable to find a pet with id ${petId} for owner ${oktaId}`,
+        validation: [],
+        data: {},
+      });
+    }
   } catch (err) {
-    errDetail(err);
+    errDetail(res, err);
+  }
+});
+
+/**
+ * @swagger
+ * components:
+ *  parameters:
+ *    petId: petId
+ *    in: path
+ *    description: The id of the pet to return
+ *    required: true
+ *    example: 1
+ *    schema:
+ *      type: integer
+ *
+ * /profiles/:id/pets/:petId:
+ *  delete:
+ *    description: Delete a pet
+ *    summary: Deletes a pet. Doesn't return anything in the response.
+ *    security:
+ *      - okta: []
+ *    tags:
+ *      - pets
+ *    parameters:
+ *      - $ref: '#/components/parameters/petId'
+ *    responses:
+ *      200:
+ *        description: Successfully deleted a pet with id X for owner Y
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/Pets'
+ *      400:
+ *        $ref: '#/components/responses/BadRequest'
+ *      401:
+ *        $ref: '#/components/responses/UnauthorizedError'
+ *      404:
+ *        description: 'Unable to find a pet with id X for owner Y'
+ *      500:
+ *        $ref: '#/components/responses/ServerError'
+ */
+router.delete('/:petId', authRequired, authId, verifyPet, async (req, res) => {
+  // Get data from the request
+  const { oktaId, petId, pet } = req.pet; // added by the verifyPet middleware
+
+  // Delete the pet
+  try {
+    if (pet && pet.length) {
+      const deleted = await petsDb.remove(petId, oktaId);
+      console.log('deleted:', deleted);
+      if (deleted) {
+        res.status(200).json({
+          message: `Successfully deleted the pet with id ${petId} for owner ${oktaId}`,
+          validation: [],
+          data: {},
+        });
+      } else {
+        res.status(500).json({
+          message: `Unexpected error deleting pet with id ${petId} for owner ${oktaId}`,
+          validation: [],
+          data: {},
+        });
+      }
+    } else {
+      res.status(404).json({
+        message: `Unable to find a pet with id ${petId} for owner ${oktaId}`,
+        validation: [],
+        data: {},
+      });
+    }
+  } catch (err) {
+    errDetail(res, err);
   }
 });
 
@@ -293,6 +370,27 @@ function authId(req, res, next) {
     });
   }
   next();
+}
+
+async function verifyPet(req, res, next) {
+  // Get ids from the request
+  const oktaId = String(req.params.id);
+  const petId = Number(req.params.petId);
+
+  // Ensure that the pet exists in the database
+  try {
+    const pets = await petsDb.findByOwnerId(oktaId);
+    const pet = pets.filter((pet) => pet.id === petId);
+    req.pet = {
+      oktaId,
+      petId,
+      pet,
+    };
+    next();
+  } catch (err) {
+    // Handle errors with a custom error utility
+    errDetail(err);
+  }
 }
 
 module.exports = router;
