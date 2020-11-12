@@ -90,7 +90,7 @@ router.get('/', authRequired, authId, async (req, res) => {
     }
   } catch (err) {
     // Handle errors with a custom error utility
-    errDetail(err);
+    errDetail(res, err);
   }
 });
 
@@ -156,7 +156,7 @@ router.get('/:petId', authRequired, authId, async (req, res) => {
     }
   } catch (err) {
     // Handle errors with a custom error utility
-    errDetail(err);
+    errDetail(res, err);
   }
 });
 
@@ -207,7 +207,7 @@ router.post('/', authRequired, authId, async (req, res) => {
       data: newPet,
     });
   } catch (err) {
-    errDetail(err);
+    errDetail(res, err);
   }
 });
 
