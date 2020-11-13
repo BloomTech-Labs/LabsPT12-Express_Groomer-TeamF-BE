@@ -19,7 +19,6 @@ function insert(location) {
 }
 
 function update(id, profile) {
-  console.log(profile);
   return db('locations')
     .where({ groomerId: id })
     .first()

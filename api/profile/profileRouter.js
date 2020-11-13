@@ -3,6 +3,10 @@ const authRequired = require('../middleware/authRequired');
 const Profiles = require('./profileModel');
 const router = express.Router();
 
+// Add the /pets sub route
+const petRouter = require('../pet/petRouter');
+router.use('/:id/pets', petRouter);
+
 /**
  * @swagger
  * components:
