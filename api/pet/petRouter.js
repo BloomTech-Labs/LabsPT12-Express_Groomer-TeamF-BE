@@ -12,8 +12,8 @@ const authRequired = require('../middleware/authRequired');
 
 /**
  * @swagger
- * components:
- *  schemas:
+ *  components:
+ *   schemas:
  *    Pets:
  *      type: object
  *      required:
@@ -35,13 +35,6 @@ const authRequired = require('../middleware/authRequired');
  *        img:
  *          type: string
  *          description: The url to the pet's profile picture
- *      example:
- *        - ownerId: '00ulthapbErVUwVJy4x6'
- *        - name: 'Bennie'
- *        - shots: true
- *        - type: 'dog'
- *        - img: 'https://images.unsplash.com/photo-1
- *
  * /profiles/:id/pets:
  *  get:
  *    description: Returns an array of pet objects for this user
@@ -52,19 +45,38 @@ const authRequired = require('../middleware/authRequired');
  *      - pets
  *    responses:
  *      200:
- *        description: An array of pets owned by a user
+ *        description: Successfully added a pet for owner X
  *        content:
  *          application/json:
  *            schema:
- *              type: array
+ *              type: object
  *              items:
- *                $refs: #/components/schemas/Pets
- *      400:
- *        $ref: '#/components/responses/BadRequest'
- *      401:
- *        $ref: '#/components/responses/UnauthorizedError'
+ *                $ref: '#/components/schemas/Pets'
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  description: A status message
+ *                  example: 'Successfully fetched the pets for profile 00ulthapbErVUwVJy4x6'
+ *                validation:
+ *                  type: array
+ *                  description: An array of validation errors
+ *                  example: []
+ *                data:
+ *                  type: array
+ *                  description: The data returned from the endpoint
+ *                example:
+ *                  - ownerId: 00ulthapbErVUwVJy4x6
+ *                    name: Rex
+ *                    shots: true
+ *                    type: dog
+ *                    img: https://images.unsplash.com/photo-1-dog
+ *                  - ownerId: 00ulthapbErVUwVJy4x6
+ *                    name: Jane
+ *                    shots: true
+ *                    type: cat
+ *                    img: https://images.unsplash.com/photo-1-cat
  *      404:
- *        $ref: '#/components/responses/NotFound'
+ *        $ref: '#/components/responses/PetNotFound'
  *      500:
  *        $ref: '#/components/responses/ServerError'
  */
@@ -96,15 +108,15 @@ router.get('/', authRequired, authId, async (req, res) => {
 
 /**
  * @swagger
- * components:
- *  parameters:
- *    petId: petId
- *    in: path
- *    description: The id of the pet to return
- *    required: true
- *    example: 1
- *    schema:
- *      type: integer
+ *  components:
+ *   parameters:
+ *     petId:
+ *      in: path
+ *      description: The id of the pet to return
+ *      required: true
+ *      example: 1
+ *      schema:
+ *        type: integer
  *
  * /profiles/:id/pets/:petId:
  *  get:
@@ -118,17 +130,34 @@ router.get('/', authRequired, authId, async (req, res) => {
  *      - $ref: '#/components/parameters/petId'
  *    responses:
  *      200:
- *        description: Successfully fetched a pet with id X for owner Y
+ *        description: Successfully fetched a pet for owner X
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/Pets'
- *      400:
- *        description: 'Bad request'
- *      401:
- *        $ref: '#/components/responses/UnauthorizedError'
+ *              type: object
+ *              items:
+ *                $ref: '#/components/schemas/Pets'
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  description: A status message
+ *                  example: 'Successfully fetched a pet for owner 00ulthapbErVUwVJy4x6'
+ *                validation:
+ *                  type: array
+ *                  description: An array of validation errors
+ *                  example: []
+ *                data:
+ *                  type: array
+ *                  description: The data returned from the endpoint
+ *                  example:
+ *                   - id: 2
+ *                     ownerId: 00ulthapbErVUwVJy4x6
+ *                     name: Rex
+ *                     shots: true
+ *                     type: dog
+ *                     img: https://images.unsplash.com/photo-1-dog
  *      404:
- *        description: 'Unable to find a pet with id X for owner Y'
+ *        $ref: '#/components/responses/PetNotFound'
  *      500:
  *        $ref: '#/components/responses/ServerError'
  */
@@ -169,13 +198,34 @@ router.get('/:petId', authRequired, authId, verifyPet, async (req, res) => {
  *      - pets
  *    responses:
  *      200:
- *        description: Successfully a pet for owner _
+ *        description: Successfully added a pet for owner X
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/Pets'
+ *              type: object
+ *              items:
+ *                $ref: '#/components/schemas/Pets'
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  description: A status message
+ *                  example: 'Successfully added a pet for owner 00ulthapbErVUwVJy4x6'
+ *                validation:
+ *                  type: array
+ *                  description: An array of validation errors
+ *                  example: []
+ *                data:
+ *                  type: array
+ *                  description: The data returned from the endpoint
+ *                  example:
+ *                   - id: 2
+ *                     ownerId: 00ulthapbErVUwVJy4x6
+ *                     name: Rex
+ *                     shots: true
+ *                     type: dog
+ *                     img: https://images.unsplash.com/photo-1-dog
  *      400:
- *        $ref: '#/components/responses/BadRequest'
+ *        $ref: '#/components/responses/NoReqBodyError'
  *      401:
  *        $ref: '#/components/responses/UnauthorizedError'
  *      500:
@@ -232,17 +282,38 @@ router.post('/', authRequired, authId, async (req, res) => {
  *      - $ref: '#/components/parameters/petId'
  *    responses:
  *      200:
- *        description: Successfully updated a pet with id X for owner Y
+ *        description: Successfully updated a pet for owner X
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/Pets'
+ *              type: object
+ *              items:
+ *                $ref: '#/components/schemas/Pets'
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  description: A status message
+ *                  example: 'Successfully updated a pet for owner 00ulthapbErVUwVJy4x6'
+ *                validation:
+ *                  type: array
+ *                  description: An array of validation errors
+ *                  example: []
+ *                data:
+ *                  type: array
+ *                  description: The data returned from the endpoint
+ *                  example:
+ *                   - id: 2
+ *                     ownerId: 00ulthapbErVUwVJy4x6
+ *                     name: Rex
+ *                     shots: true
+ *                     type: dog
+ *                     img: https://images.unsplash.com/photo-1-dog
  *      400:
- *        $ref: '#/components/responses/BadRequest'
+ *        $ref: '#/components/responses/NoReqBodyError'
  *      401:
  *        $ref: '#/components/responses/UnauthorizedError'
  *      404:
- *        description: 'Unable to find a pet with id X for owner Y'
+ *        $ref: '#/components/responses/PetNotFound'
  *      500:
  *        $ref: '#/components/responses/ServerError'
  */
@@ -306,17 +377,32 @@ router.put('/:petId', authRequired, authId, verifyPet, async (req, res) => {
  *      - $ref: '#/components/parameters/petId'
  *    responses:
  *      200:
- *        description: Successfully deleted a pet with id X for owner Y
+ *        description: Successfully deleted the pet with id 2 for owner 00ulthapbErVUwVJy4x6
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/Pets'
+ *              type: object
+ *              items:
+ *                $ref: '#/components/schemas/Pets'
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  description: A status message
+ *                  example: 'Successfully delete the pet with id 2 for owner 00ulthapbErVUwVJy4x6'
+ *                validation:
+ *                  type: array
+ *                  description: An array of validation errors
+ *                  example: []
+ *                data:
+ *                  type: array
+ *                  description: The data returned from the endpoint
+ *                  example: {1}
  *      400:
  *        $ref: '#/components/responses/BadRequest'
  *      401:
  *        $ref: '#/components/responses/UnauthorizedError'
  *      404:
- *        description: 'Unable to find a pet with id X for owner Y'
+ *        $ref: '#/components/responses/PetNotFound'
  *      500:
  *        $ref: '#/components/responses/ServerError'
  */
