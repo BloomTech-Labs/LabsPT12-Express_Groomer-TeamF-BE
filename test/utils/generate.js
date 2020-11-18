@@ -54,6 +54,18 @@ function buildLocation(overrides = {}) {
   };
 }
 
+// Pet
+function buildPet(overrides = {}) {
+  return {
+    ownerId: getOktaId(),
+    name: faker.name.firstName(),
+    shots: true,
+    type: 'dog',
+    img: getImg(),
+    ...overrides,
+  };
+}
+
 // Response
 function buildRes(overrides = {}) {
   const res = {
@@ -90,6 +102,7 @@ module.exports = {
   getZipCode,
   buildUser,
   buildLocation,
+  buildPet,
   buildRes,
   buildReq,
 };

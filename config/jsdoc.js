@@ -56,6 +56,34 @@ module.exports = {
             },
           },
         },
+        PetNotFound: {
+          description: 'Pet Not Found',
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    description: 'A message about the pets not found',
+                    example:
+                      'Unable to find a pet with id ${petId} for owner ${oktaId}',
+                  },
+                  validation: {
+                    type: 'array',
+                    description: 'An array of validation errors',
+                    example: [],
+                  },
+                  data: {
+                    type: 'array',
+                    description: 'An array of objects containing the data',
+                    example: {},
+                  },
+                },
+              },
+            },
+          },
+        },
         ServerError: {
           description: 'There was a problem completing the required operation',
           content: {
@@ -71,12 +99,40 @@ module.exports = {
                   validation: {
                     type: 'array',
                     description: 'An array of validation errors',
-                    example: `['The id is missing']`,
+                    example: [],
                   },
                   data: {
                     type: 'array',
                     description: 'An array of objects containing the data',
-                    example: '{}',
+                    example: {},
+                  },
+                },
+              },
+            },
+          },
+        },
+        NoReqBodyError: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  message: {
+                    type: 'string',
+                    description: 'A message about the server error',
+                    example: 'Server Error',
+                  },
+                  validation: {
+                    type: 'array',
+                    description: 'An array of validation errors',
+                    example: [
+                      'You must submit a request body in order to add a pet',
+                    ],
+                  },
+                  data: {
+                    type: 'array',
+                    description: 'An array of objects containing the data',
+                    example: {},
                   },
                 },
               },
