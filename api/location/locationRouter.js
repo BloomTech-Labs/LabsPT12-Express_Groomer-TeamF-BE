@@ -12,6 +12,86 @@ const { errDetail } = require('../utils/utils');
 const authRequired = require('../middleware/authRequired');
 
 // Routes
+
+/**
+ * @swagger
+ *  components:
+ *   schemas:
+ *    Locations:
+ *      type: object
+ *      required:
+ *        - groomerId
+ *      properties:
+ *        id:
+ *          type: int64
+ *          description: The record id
+ *        groomerId:
+ *          type: string
+ *          description: A foreign key referencing profiles.id
+ *        name:
+ *          type: string
+ *          description: The location's name
+ *        businessName:
+ *          type: string
+ *          description: The name of the groomer's business
+ *        address:
+ *          type: string
+ *          description: The location's address
+ *        email:
+ *          type: string
+ *          description: The business's email address
+ *        phoneNumber:
+ *          type: string
+ *          description: The business's phone number
+ *        lat:
+ *          type: float
+ *          description: The latitude coordinate for the business address
+ *        lon:
+ *          type: float
+ *          description: The longitude coordinate for the business address
+ * /locations:
+ *  get:
+ *    description: Returns an array of location objects for this user
+ *    summary: Get a list of locations owned by a user
+ *    security:
+ *      - okta: []
+ *    tags:
+ *      - locations
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              items:
+ *                $ref: '#/components/schemas/Locations'
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  description: A status message
+ *                  example: 'Success'
+ *                validation:
+ *                  type: array
+ *                  description: An array of validation errors
+ *                  example: []
+ *                data:
+ *                  type: array
+ *                  description: The data returned from the endpoint
+ *                example:
+ *                  - id: 2
+ *                    groomerId: '00ultwz1n9ORpNFc04x6'
+ *                    businessName: "Gillian's Fine Pet Grooming"
+ *                    address: faker.address.streetAddress('###')
+ *                    email: faker.internet.email()
+ *                    phoneNumber: faker.phone.phoneNumberFormat()
+ *                    lat: -77.0497
+ *                    lng: 38.9007
+ *      404:
+ *        $ref: '#/components/responses/LocationNotFound'
+ *      500:
+ *        $ref: '#/components/responses/ServerError'
+ */
 router.get('/', authRequired, async (req, res) => {
   try {
     const locationData = await findAll();
@@ -25,6 +105,93 @@ router.get('/', authRequired, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ *  components:
+ *   parameters:
+ *     groomerId:
+ *      in: path
+ *      description: The groomerId, which is the sub from the okta auth claims
+ *      required: true
+ *      example: 00ultwz1n9ORpNFc04x6
+ *      schema:
+ *        type: string
+ *   schemas:
+ *    Locations:
+ *      type: object
+ *      required:
+ *        - groomerId
+ *      properties:
+ *        id:
+ *          type: integer
+ *          description: The record id
+ *        groomerId:
+ *          type: string
+ *          description: A foreign key referencing profiles.id
+ *        name:
+ *          type: string
+ *          description: The location's name
+ *        businessName:
+ *          type: string
+ *          description: The name of the groomer's business
+ *        address:
+ *          type: string
+ *          description: The location's address
+ *        email:
+ *          type: string
+ *          description: The business's email address
+ *        phoneNumber:
+ *          type: string
+ *          description: The business's phone number
+ *        lat:
+ *          type: float
+ *          description: The latitude coordinate for the business address
+ *        lon:
+ *          type: float
+ *          description: The longitude coordinate for the business address
+ * /locations:
+ *  get:
+ *    description: Returns an array of location objects for this user
+ *    summary: Get a list of locations owned by a user
+ *    security:
+ *      - okta: []
+ *    tags:
+ *      - locations
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              items:
+ *                $ref: '#/components/schemas/Locations'
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  description: A status message
+ *                  example: 'Success'
+ *                validation:
+ *                  type: array
+ *                  description: An array of validation errors
+ *                  example: []
+ *                data:
+ *                  type: array
+ *                  description: The data returned from the endpoint
+ *                example:
+ *                  - id: 2
+ *                    groomerId: '00ultwz1n9ORpNFc04x6'
+ *                    businessName: "Gillian's Fine Pet Grooming"
+ *                    address: faker.address.streetAddress('###')
+ *                    email: faker.internet.email()
+ *                    phoneNumber: faker.phone.phoneNumberFormat()
+ *                    lat: -77.0497
+ *                    lng: 38.9007
+ *      404:
+ *        $ref: '#/components/responses/LocationNotFound'
+ *      500:
+ *        $ref: '#/components/responses/ServerError'
+ */
 router.get('/:groomerId', authRequired, async (req, res) => {
   try {
     const groomerId = String(req.params.groomerId);
