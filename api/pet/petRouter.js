@@ -10,6 +10,9 @@ const { errDetail } = require('../utils/utils');
 // Auth middleware
 const authRequired = require('../middleware/authRequired');
 
+// Custom middleware
+const { authId } = require('../middleware/petMiddleware');
+
 /**
  * @swagger
  *  components:
@@ -82,7 +85,6 @@ const authRequired = require('../middleware/authRequired');
  */
 router.get('/', authRequired, authId, async (req, res) => {
   try {
-    // Return any pets found, or indicate none were returned
     const oktaId = String(req.params.id);
     const pets = await petsDb.findByOwnerId(oktaId);
 
@@ -161,19 +163,22 @@ router.get('/', authRequired, authId, async (req, res) => {
  *      500:
  *        $ref: '#/components/responses/ServerError'
  */
-router.get('/:petId', authRequired, authId, verifyPet, async (req, res) => {
-  // Get data from the request
-  const { oktaId, petId, pet } = req.pet; // added by the verifyPet middleware
+router.get('/:petId', authRequired, authId, async (req, res) => {
+  const oktaId = String(req.params.id);
+  const petId = Number(req.params.petId);
+  const pets = await petsDb.findByOwnerId(oktaId);
+  const pet = pets.filter((pet) => pet.id === petId);
 
-  // Return any pets found, or indicate none were found
   try {
     if (pet && pet.length) {
+      // Return any pets found
       res.status(200).json({
         message: `Successfully fetched a pet with id ${petId} for owner ${oktaId}`,
         validation: [],
         data: pet,
       });
     } else {
+      // Indicate none were found
       res.status(404).json({
         message: `Unable to find a pet with id ${petId} for owner ${oktaId}`,
         validation: [],
@@ -317,9 +322,11 @@ router.post('/', authRequired, authId, async (req, res) => {
  *      500:
  *        $ref: '#/components/responses/ServerError'
  */
-router.put('/:petId', authRequired, authId, verifyPet, async (req, res) => {
-  // Get data from the request
-  const { oktaId, petId, pet } = req.pet; // added by the verifyPet middleware
+router.put('/:petId', authRequired, authId, async (req, res) => {
+  const oktaId = String(req.params.id);
+  const petId = Number(req.params.petId);
+  const pets = await petsDb.findByOwnerId(oktaId);
+  const pet = pets.filter((pet) => pet.id === petId);
   const petUpdates = req.body;
 
   // Ensure there is request data
@@ -406,9 +413,11 @@ router.put('/:petId', authRequired, authId, verifyPet, async (req, res) => {
  *      500:
  *        $ref: '#/components/responses/ServerError'
  */
-router.delete('/:petId', authRequired, authId, verifyPet, async (req, res) => {
-  // Get data from the request
-  const { oktaId, petId, pet } = req.pet; // added by the verifyPet middleware
+router.delete('/:petId', authRequired, authId, async (req, res) => {
+  const oktaId = String(req.params.id);
+  const petId = Number(req.params.petId);
+  const pets = await petsDb.findByOwnerId(oktaId);
+  const pet = pets.filter((pet) => pet.id === petId);
 
   // Delete the pet
   try {
@@ -439,44 +448,5 @@ router.delete('/:petId', authRequired, authId, verifyPet, async (req, res) => {
     errDetail(res, err);
   }
 });
-
-// Middleware
-function authId(req, res, next) {
-  // Authorize the user to only view their pets
-  // Check logged in id from the okta JWT against the okta id in the params
-  const oktaId = String(req.params.id);
-  const authId = String(req.profile.id); // Received from the authRequired middleware
-  if (authId !== oktaId) {
-    return res.status(401).json({
-      message: `Access Denied`,
-      validation: [
-        `Your auth id ${authId} and the route profile id ${oktaId} don't match`,
-      ],
-      data: {},
-    });
-  }
-  next();
-}
-
-async function verifyPet(req, res, next) {
-  // Get ids from the request
-  const oktaId = String(req.params.id);
-  const petId = Number(req.params.petId);
-
-  // Ensure that the pet exists in the database
-  try {
-    const pets = await petsDb.findByOwnerId(oktaId);
-    const pet = pets.filter((pet) => pet.id === petId);
-    req.pet = {
-      oktaId,
-      petId,
-      pet,
-    };
-    next();
-  } catch (err) {
-    // Handle errors with a custom error utility
-    errDetail(err);
-  }
-}
 
 module.exports = router;
