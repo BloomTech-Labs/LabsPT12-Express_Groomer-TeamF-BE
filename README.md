@@ -140,7 +140,7 @@ Whimsical (User Flow): https://whimsical.com/express-groomer-UAEP3cKj4Nm9ZH5vxoa
 The backend supports the following app features:
 
 - The API is a fully functional Node/Express web application interfacing with a Postgres db
-- Knex is used as the query builder used to create database model functions
+- Knex is the query builder used to create database model functions
 - Authentication middleware enables the front end to use Okta authentication
 - Authorization middleware in the `pets` route handlers restricts changes made to pet records. Only the pet’s owner is permitted to modify a pet record, including updating or deleting it
 
@@ -150,19 +150,19 @@ The backend supports the following app features:
   2. `locations` : The groomer’s business location data, including business name and address
   3. `pets` : The client’s pet data, including pet name, type, and a flag for whether the pet has all shots up to date
 
-- Each table has an accompany node router:
+- Each table has an accompanying node router:
 
   1. `profileRouter`, for controlling the data to/from the `profiles` table
   2. `locationRouter`, for controlling data to/from the `locations` table
   3. `petRouter`, for controlling data to/from the `pets` table
 
-Using the `profiles` table and the `profileRouter`, users can:
+Using the `profiles` table and the `profileRouter`:
 
-- Create an account and register as either a client or a groomer
+- Users can create an account and register as either a client or a groomer
 - Users of either type can login using Okta authentication
 - Users can persist user profile data in the `profiles` table using the `profileRouter`
 
-Using the `locations` table and `locationRouter`, users can:
+Using the `locations` table and `locationRouter`:
 
 - Groomers can add profile data in their profile page with information about their business
 - The Mapbox component can reference the latitude and longitude of a groomer's location (support for this)
@@ -181,7 +181,7 @@ There are basic unit tests of all route handlers and their HTTP methods.
 - Add a pet health issues table and pet health issues router
 - Add a join table for a many-to-many relationship between pet health issues and pets, `pets_healthissues`
 - Add an `appointments` table as per the architecture document:
-  (Whimsical Architecture Diagram)[https://whimsical.com/architecture-diagram-ADh8unt91rRsvfsWk3YLfA]
+  [Whimsical Architecture Diagram](https://whimsical.com/architecture-diagram-ADh8unt91rRsvfsWk3YLfA)
 - Add backend middleware, utils or controllers necessary to render data in an easy to use format for the frontend, especially for the `appointments` related features. For instance, one user story reads "As a groomer, I want to be able to see the requests that I get from users and manage them". It would be ideal to structure that data and output it in the desired manner for the front end devs to facilitate development.
 - Add a `favorites` table with saved favorite groomers that the users can access and manage (full CRUD is probably needed)
 
