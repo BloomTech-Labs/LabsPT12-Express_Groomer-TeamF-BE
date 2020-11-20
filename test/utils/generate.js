@@ -2,7 +2,7 @@ const faker = require('faker');
 
 // Faker generators
 // Common data
-const getId = () => faker.random.uuid();
+const getId = () => faker.random.number(10);
 const getCity = () => faker.address.city();
 const getState = () => faker.address.stateAbbr();
 const getZipCode = () => faker.address.zipCode();
@@ -24,7 +24,7 @@ const getLng = () => faker.address.longitude();
 // User
 function buildUser(overrides = {}) {
   return {
-    id: getId(),
+    id: getOktaId(),
     avatarUrl: getImg(),
     email: getEmail(),
     name: getName(),
@@ -57,6 +57,7 @@ function buildLocation(overrides = {}) {
 // Pet
 function buildPet(overrides = {}) {
   return {
+    id: getId(),
     ownerId: getOktaId(),
     name: faker.name.firstName(),
     shots: true,
