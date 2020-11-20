@@ -59,7 +59,7 @@ const { authId } = require('../middleware/petMiddleware');
  *                message:
  *                  type: string
  *                  description: A status message
- *                  example: 'Successfully fetched the pets for profile 00ulthapbErVUwVJy4x6'
+ *                  example: 'Successfully added a pet for owner 00ulthapbErVUwVJy4x6'
  *                validation:
  *                  type: array
  *                  description: An array of validation errors
@@ -67,17 +67,19 @@ const { authId } = require('../middleware/petMiddleware');
  *                data:
  *                  type: array
  *                  description: The data returned from the endpoint
- *                example:
- *                  - ownerId: 00ulthapbErVUwVJy4x6
- *                    name: Rex
- *                    shots: true
- *                    type: dog
- *                    img: https://images.unsplash.com/photo-1-dog
- *                  - ownerId: 00ulthapbErVUwVJy4x6
- *                    name: Jane
- *                    shots: true
- *                    type: cat
- *                    img: https://images.unsplash.com/photo-1-cat
+ *                  example:
+ *                   - id: 1
+ *                     ownerId: 00ulthapbErVUwVJy4x6
+ *                     name: Rex
+ *                     shots: true
+ *                     type: dog
+ *                     img: https://images.unsplash.com/photo-1-dog
+ *                   - id: 2
+ *                     ownerId: 00ulthapbErVUwVJy4x6
+ *                     name: Arnold
+ *                     shots: true
+ *                     type: cat
+ *                     img: https://images.unsplash.com/photo-1-cat
  *      404:
  *        $ref: '#/components/responses/PetNotFound'
  *      500:
@@ -143,7 +145,7 @@ router.get('/', authRequired, authId, async (req, res) => {
  *                message:
  *                  type: string
  *                  description: A status message
- *                  example: 'Successfully fetched a pet for owner 00ulthapbErVUwVJy4x6'
+ *                  example: 'Successfully fetched the pets for profile 00ulthapbErVUwVJy4x6'
  *                validation:
  *                  type: array
  *                  description: An array of validation errors
@@ -395,7 +397,7 @@ router.put('/:petId', authRequired, authId, async (req, res) => {
  *                message:
  *                  type: string
  *                  description: A status message
- *                  example: 'Successfully delete the pet with id 2 for owner 00ulthapbErVUwVJy4x6'
+ *                  example: 'Successfully deleted the pet with id 2 for owner 00ulthapbErVUwVJy4x6'
  *                validation:
  *                  type: array
  *                  description: An array of validation errors
