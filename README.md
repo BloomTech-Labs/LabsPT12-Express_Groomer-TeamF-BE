@@ -129,11 +129,11 @@ There are 3 options to get postgresql installed locally [Choose one]:
 
 ## Summary
 
-Release #: 2
-Release status: In progress
-Trello Board: https://trello.com/b/ZfhxRCcq/labs-pt12-express-groomer-team-f
-Whimsical (Archiecture): [https://whimsical.com/architecture-diagram-ADh8unt91rRsvfsWk3YLfA]
-Whimsical (User Flow): [https://whimsical.com/express-groomer-UAEP3cKj4Nm9ZH5vxoaw7M]
+Release #: 2 <br>
+Release status: In progress<br>
+Trello Board: (https://trello.com/b/ZfhxRCcq/labs-pt12-express-groomer-team-f)<br>
+Whimsical (Architecture): (https://whimsical.com/architecture-diagram-ADh8unt91rRsvfsWk3YLfA)<br>
+Whimsical (User Flow): (https://whimsical.com/express-groomer-UAEP3cKj4Nm9ZH5vxoaw7M)<br>
 
 ## Features Completed
 
